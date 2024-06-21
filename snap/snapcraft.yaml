@@ -20,7 +20,12 @@ architectures:
 parts:
   tensor-flow-lite:
     plugin: python
-    python-packages: [argparse, numpy, opencv-python, tflite-support, protobuf]
+    python-packages:
+      - argparse
+      - numpy
+      - opencv-python
+      - tflite-support
+      - protobuf
     source: https://github.com/tensorflow/examples.git
     source-depth: 1
     stage-packages:
@@ -41,25 +46,43 @@ parts:
 
       mkdir -p $CRAFT_PART_INSTALL/tflite
 
+
       # Copy example directories to $CRAFT_PART_INSTALL
       cp -r lite/examples/image_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_classification
-      
+      cp -r lite/examples/object_detection/raspberry_pi $CRAFT_PART_INSTALL/tflite/object_detection
+
+
+      # Can't just run setup, as it installs the requirements with specific versions that are not available under our version of python
+      # chmod +x lite/examples/image_classification/raspberry_pi/setup.sh
+      # lite/examples/image_classification/raspberry_pi/setup.sh
+
+
+
       # Download TF Lite model with metadata.
       cd $SNAPCRAFT_PART_INSTALL
       curl \
         -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_classification/rpi/lite-model_efficientnet_lite0_uint8_2.tflite' \
         -o efficientnet_lite0.tflite
-
       # curl \
       #   -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_classification/rpi/efficientnet_lite0_edgetpu.tflite' \
       #   -o efficientnet_lite0_edgetpu.tflite
 
+      curl \
+        -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/lite-model_efficientdet_lite0_detection_metadata_1.tflite' \
+        -o efficientdet_lite0.tflite
+      # curl \
+      #   -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/efficientdet_lite0_edgetpu_metadata.tflite' \
+      #   -o efficientdet_lite0_edgetpu.tflite
 
 apps:
   image-classification:
-    plugs: 
+    plugs:
       - camera
       - x11
-    environment:
-      QT_QPA_PLATFORM: xcb
     command: bin/python3 $SNAP/tflite/image_classification/classify.py --model $SNAP/efficientnet_lite0.tflite
+
+  object-detection:
+    plugs:
+      - camera
+      - x11
+    command: bin/python3 $SNAP/tflite/object_detection/detect.py --model $SNAP/efficientdet_lite0.tflite
