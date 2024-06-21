@@ -1,0 +1,65 @@
+name: tf-lite-examples
+version: "snap"
+summary: TensorFlow Lite Examples
+description: TensorFlow Lite examples for the Raspberry Pi packaged in a snap with all the required dependencies.
+adopt-info: tensor-flow-lite
+
+confinement: strict
+grade: devel
+
+base: core22
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+
+# package-repositories:
+#  - type: apt
+#    ppa: deadsnakes/ppa
+
+parts:
+  tensor-flow-lite:
+    plugin: python
+    python-packages: [argparse, numpy, opencv-python, tflite-support, protobuf]
+    source: https://github.com/tensorflow/examples.git
+    source-depth: 1
+    stage-packages:
+      - libgl1
+      - python3-libusb1
+      - libice6
+      - libsm6
+
+    override-pull: |
+      craftctl default
+
+      # prefix the snap version with the upstream tag, or fall back to the commit hash
+      UPSTREAM_VERSION=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD)
+      craftctl set version=$UPSTREAM_VERSION+$(craftctl get version)
+
+    override-build: |
+      craftctl default
+
+      mkdir -p $CRAFT_PART_INSTALL/tflite
+
+      # Copy example directories to $CRAFT_PART_INSTALL
+      cp -r lite/examples/image_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_classification
+      
+      # Download TF Lite model with metadata.
+      cd $SNAPCRAFT_PART_INSTALL
+      curl \
+        -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_classification/rpi/lite-model_efficientnet_lite0_uint8_2.tflite' \
+        -o efficientnet_lite0.tflite
+
+      # curl \
+      #   -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_classification/rpi/efficientnet_lite0_edgetpu.tflite' \
+      #   -o efficientnet_lite0_edgetpu.tflite
+
+
+apps:
+  image-classification:
+    plugs: 
+      - camera
+      - x11
+    environment:
+      QT_QPA_PLATFORM: xcb
+    command: bin/python3 $SNAP/tflite/image_classification/classify.py --model $SNAP/efficientnet_lite0.tflite
