@@ -1,5 +1,4 @@
 name: tf-lite-examples
-version: "snap"
 summary: TensorFlow Lite Examples
 description: TensorFlow Lite examples for the Raspberry Pi packaged in a snap with all the required dependencies.
 adopt-info: tensor-flow-lite
@@ -13,12 +12,10 @@ architectures:
   - build-on: amd64
   - build-on: arm64
 
-# package-repositories:
-#  - type: apt
-#    ppa: deadsnakes/ppa
-
 parts:
   tensor-flow-lite:
+    build-environment:
+      - BUILD_METADATA: snap
     plugin: python
     python-packages:
       - argparse
@@ -39,50 +36,85 @@ parts:
 
       # prefix the snap version with the upstream tag, or fall back to the commit hash
       UPSTREAM_VERSION=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD)
-      craftctl set version=$UPSTREAM_VERSION+$(craftctl get version)
+      craftctl set version=$UPSTREAM_VERSION+$BUILD_METADATA
 
     override-build: |
       craftctl default
 
       mkdir -p $CRAFT_PART_INSTALL/tflite
 
-
       # Copy example directories to $CRAFT_PART_INSTALL
       cp -r lite/examples/image_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_classification
       cp -r lite/examples/object_detection/raspberry_pi $CRAFT_PART_INSTALL/tflite/object_detection
+      cp -r lite/examples/pose_estimation/raspberry_pi $CRAFT_PART_INSTALL/tflite/pose_estimation
 
 
-      # Can't just run setup, as it installs the requirements with specific versions that are not available under our version of python
-      # chmod +x lite/examples/image_classification/raspberry_pi/setup.sh
-      # lite/examples/image_classification/raspberry_pi/setup.sh
+  image-classification:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_classification/rpi/lite-model_efficientnet_lite0_uint8_2.tflite
+    source-type: file
 
+  object-detection:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/lite-model_efficientdet_lite0_detection_metadata_1.tflite
+    source-type: file
 
+  pose-estimation:
+    plugin: nil
+    build-environment:
+      - DATA_DIR: $CRAFT_PART_INSTALL
+    override-pull: |
+      # Download TF Lite models
+      FILE=${DATA_DIR}/posenet.tflite
+      if [ ! -f "$FILE" ]; then
+        curl \
+          -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/posenet_mobilenet_v1_100_257x257_multi_kpt_stripped.tflite' \
+          -o ${FILE}
+      fi
 
-      # Download TF Lite model with metadata.
-      cd $SNAPCRAFT_PART_INSTALL
-      curl \
-        -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_classification/rpi/lite-model_efficientnet_lite0_uint8_2.tflite' \
-        -o efficientnet_lite0.tflite
-      # curl \
-      #   -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_classification/rpi/efficientnet_lite0_edgetpu.tflite' \
-      #   -o efficientnet_lite0_edgetpu.tflite
+      FILE=${DATA_DIR}/movenet_lightning.tflite
+      if [ ! -f "$FILE" ]; then
+        curl \
+          -L 'https://tfhub.dev/google/lite-model/movenet/singlepose/lightning/tflite/float16/4?lite-format=tflite' \
+          -o ${FILE}
+      fi
 
-      curl \
-        -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/lite-model_efficientdet_lite0_detection_metadata_1.tflite' \
-        -o efficientdet_lite0.tflite
-      # curl \
-      #   -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/efficientdet_lite0_edgetpu_metadata.tflite' \
-      #   -o efficientdet_lite0_edgetpu.tflite
+      FILE=${DATA_DIR}/movenet_thunder.tflite
+      if [ ! -f "$FILE" ]; then
+        curl \
+          -L 'https://tfhub.dev/google/lite-model/movenet/singlepose/thunder/tflite/float16/4?lite-format=tflite' \
+          -o ${FILE}
+      fi
+
+      FILE=${DATA_DIR}/movenet_multipose.tflite
+      if [ ! -f "$FILE" ]; then
+        curl \
+          -L 'https://tfhub.dev/google/lite-model/movenet/multipose/lightning/tflite/float16/1?lite-format=tflite' \
+          -o ${FILE}
+      fi
+
+      FILE=${DATA_DIR}/classifier.tflite
+      if [ ! -f "$FILE" ]; then
+        curl \
+          -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/pose_classifier/yoga_classifier.tflite' \
+          -o ${FILE}
+      fi
 
 apps:
   image-classification:
     plugs:
       - camera
       - x11
-    command: bin/python3 $SNAP/tflite/image_classification/classify.py --model $SNAP/efficientnet_lite0.tflite
+    command: bin/python3 $SNAP/tflite/image_classification/classify.py --model $SNAP/lite-model_efficientnet_lite0_uint8_2.tflite
 
   object-detection:
     plugs:
       - camera
       - x11
-    command: bin/python3 $SNAP/tflite/object_detection/detect.py --model $SNAP/efficientdet_lite0.tflite
+    command: bin/python3 $SNAP/tflite/object_detection/detect.py --model $SNAP/lite-model_efficientdet_lite0_detection_metadata_1.tflite
+
+  pose-estimation:
+    plugs:
+      - camera
+      - x11
+    command: bin/python3 $SNAP/tflite/pose_estimation/pose_estimation.py
