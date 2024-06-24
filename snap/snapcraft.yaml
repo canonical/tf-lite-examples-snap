@@ -13,6 +13,12 @@ architectures:
   - build-on: arm64
 
 parts:
+  local:
+    plugin: nil
+    source: snap/local
+    override-build: |
+      cp -rv bin $SNAPCRAFT_PART_INSTALL/
+
   tensor-flow-lite:
     build-environment:
       - BUILD_METADATA: snap
@@ -23,6 +29,8 @@ parts:
       - opencv-python
       - tflite-support
       - protobuf
+      - pandas
+      - tflite-runtime
     source: https://github.com/tensorflow/examples.git
     source-depth: 1
     stage-packages:
@@ -117,4 +125,9 @@ apps:
     plugs:
       - camera
       - x11
+    command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/pose_estimation/pose_estimation.py
+
+  python:
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3
