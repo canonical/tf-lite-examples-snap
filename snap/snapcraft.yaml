@@ -1,7 +1,7 @@
 name: tf-lite-examples
 summary: TensorFlow Lite Examples
 description: TensorFlow Lite examples for the Raspberry Pi packaged in a snap with all the required dependencies.
-adopt-info: tensor-flow-lite
+adopt-info: tensorflow-lite
 
 confinement: strict
 grade: devel
@@ -19,29 +19,37 @@ parts:
     override-build: |
       cp -rv bin $SNAPCRAFT_PART_INSTALL/
 
-  tensor-flow-lite:
-    build-environment:
-      - BUILD_METADATA: snap
+  python-dependencies:
     plugin: python
+    source: .
     python-packages:
       - argparse
-      - numpy<2      # <2 required for pose-estimation
+      - numpy<2      # <2 required for pose-estimation and video-classification
       - opencv-python
       - tflite-support
       - protobuf
       - pandas
       - tflite-runtime
       - matplotlib   # Required for audio-classification
-      - sounddevice  # Required for audio-classification
-      - scipy        # Required for audio-classification
-    source: https://github.com/tensorflow/examples.git
-    source-depth: 1
+      # - sounddevice  # Required for audio-classification
+      # - scipy        # Required for audio-classification
+
+  deb-dependencies:
+    plugin: nil
     stage-packages:
       - libgl1
       - python3-libusb1
       - libice6
       - libsm6
-      - python3-pyaudio  # Required for audio-classification
+      # - python3-pyaudio  # Required for audio-classification
+      # - libportaudio2  # Required for audio-classification
+
+  tensorflow-lite:
+    build-environment:
+      - BUILD_METADATA: snap
+    plugin: dump
+    source: https://github.com/tensorflow/examples.git
+    source-depth: 1
 
     override-pull: |
       craftctl default
