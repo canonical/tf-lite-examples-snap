@@ -25,12 +25,15 @@ parts:
     plugin: python
     python-packages:
       - argparse
-      - numpy<2
+      - numpy<2      # <2 required for pose-estimation
       - opencv-python
       - tflite-support
       - protobuf
       - pandas
       - tflite-runtime
+      - matplotlib   # Required for audio-classification
+      - sounddevice  # Required for audio-classification
+      - scipy        # Required for audio-classification
     source: https://github.com/tensorflow/examples.git
     source-depth: 1
     stage-packages:
@@ -38,6 +41,7 @@ parts:
       - python3-libusb1
       - libice6
       - libsm6
+      - python3-pyaudio  # Required for audio-classification
 
     override-pull: |
       craftctl default
@@ -59,6 +63,8 @@ parts:
       cp -r lite/examples/pose_estimation/raspberry_pi $CRAFT_PART_INSTALL/tflite/pose_estimation
       # Image segmentation
       cp -r lite/examples/image_segmentation/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_segmentation
+      # Audio classification
+      cp -r lite/examples/audio_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/audio_classification
 
 
   image-classification:
@@ -123,6 +129,13 @@ parts:
     organize:
       lite-model_deeplabv3_1_metadata_2.tflite: deeplabv3.tflite
 
+  audio-classification:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/audio_classification/rpi/lite-model_yamnet_classification_tflite_1.tflite
+    source-type: file
+    organize:
+      lite-model_yamnet_classification_tflite_1.tflite: yamnet.tflite
+
 apps:
   image-classification:
     plugs:
@@ -151,6 +164,13 @@ apps:
       - x11
     command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/image_segmentation/segment.py
+
+  audio-classification:
+    plugs:
+      - audio-record
+      - x11
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3 $SNAP/tflite/audio_classification/classify.py
 
   python:
     command-chain: [bin/cd-to-snap.sh]
