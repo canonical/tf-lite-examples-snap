@@ -51,10 +51,14 @@ parts:
 
       mkdir -p $CRAFT_PART_INSTALL/tflite
 
-      # Copy example directories to $CRAFT_PART_INSTALL
+      # Image classification
       cp -r lite/examples/image_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_classification
+      # Object detection
       cp -r lite/examples/object_detection/raspberry_pi $CRAFT_PART_INSTALL/tflite/object_detection
+      # Pose estimation
       cp -r lite/examples/pose_estimation/raspberry_pi $CRAFT_PART_INSTALL/tflite/pose_estimation
+      # Image segmentation
+      cp -r lite/examples/image_segmentation/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_segmentation
 
 
   image-classification:
@@ -112,6 +116,13 @@ parts:
           -o ${FILE}
       fi
 
+  image-segmentation:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_segmentation/rpi/lite-model_deeplabv3_1_metadata_2.tflite
+    source-type: file
+    organize:
+      lite-model_deeplabv3_1_metadata_2.tflite: deeplabv3.tflite
+
 apps:
   image-classification:
     plugs:
@@ -133,6 +144,13 @@ apps:
       - x11
     command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/pose_estimation/pose_estimation.py
+
+  image-segmentation:
+    plugs:
+      - camera
+      - x11
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3 $SNAP/tflite/image_segmentation/segment.py
 
   python:
     command-chain: [bin/cd-to-snap.sh]
