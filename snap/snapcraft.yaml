@@ -65,6 +65,8 @@ parts:
       cp -r lite/examples/image_segmentation/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_segmentation
       # Audio classification
       cp -r lite/examples/audio_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/audio_classification
+      # Video classification
+      cp -r lite/examples/video_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/video_classification
 
 
   image-classification:
@@ -136,6 +138,13 @@ parts:
     organize:
       lite-model_yamnet_classification_tflite_1.tflite: yamnet.tflite
 
+  video-classification:
+    plugin: dump
+    source: https://tfhub.dev/tensorflow/lite-model/movinet/a0/stream/kinetics-600/classification/tflite/int8/1?lite-format=tflite
+    source-type: file
+    organize:
+      1?lite-format=tflite: movinet_a0_int8.tflite
+
 apps:
   image-classification:
     plugs:
@@ -171,6 +180,13 @@ apps:
       - x11
     command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/audio_classification/classify.py
+
+  video-classification:
+    plugs:
+      - camera
+      - x11
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3 $SNAP/tflite/video_classification/classify.py
 
   python:
     command-chain: [bin/cd-to-snap.sh]
