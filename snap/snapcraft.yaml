@@ -6,7 +6,7 @@ adopt-info: tensorflow-lite
 confinement: strict
 grade: devel
 
-base: core22
+base: core20
 
 architectures:
   - build-on: amd64
@@ -24,10 +24,10 @@ parts:
     source: .
     python-packages:
       - argparse
-      - numpy<2      # <2 required for pose-estimation and video-classification
-      - opencv-python
-      - tflite-support
-      - protobuf
+      - numpy>=1.20.0
+      - opencv-python~=4.5.3.56
+      - tflite-support>=0.4.2
+      - protobuf>=3.18.0,<4
       - pandas
       - tflite-runtime
       - matplotlib   # Required for audio-classification
@@ -52,106 +52,38 @@ parts:
     source-depth: 1
 
     override-pull: |
-      craftctl default
+      snapcraftctl pull
 
       # prefix the snap version with the upstream tag, or fall back to the commit hash
       UPSTREAM_VERSION=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD)
-      craftctl set version=$UPSTREAM_VERSION+$BUILD_METADATA
+      snapcraftctl set-version $UPSTREAM_VERSION+$BUILD_METADATA
 
     override-build: |
-      craftctl default
+      snapcraftctl build
 
-      mkdir -p $CRAFT_PART_INSTALL/tflite
+      mkdir -p $SNAPCRAFT_PART_INSTALL/tflite
 
       # Image classification
-      cp -r lite/examples/image_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_classification
+      cp -r lite/examples/image_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/image_classification
       # Object detection
-      cp -r lite/examples/object_detection/raspberry_pi $CRAFT_PART_INSTALL/tflite/object_detection
+      cp -r lite/examples/object_detection/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/object_detection
       # Pose estimation
-      cp -r lite/examples/pose_estimation/raspberry_pi $CRAFT_PART_INSTALL/tflite/pose_estimation
+      cp -r lite/examples/pose_estimation/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/pose_estimation
       # Image segmentation
-      cp -r lite/examples/image_segmentation/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_segmentation
+      cp -r lite/examples/image_segmentation/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/image_segmentation
       # Audio classification
-      cp -r lite/examples/audio_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/audio_classification
+      cp -r lite/examples/audio_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/audio_classification
       # Video classification
-      cp -r lite/examples/video_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/video_classification
+      cp -r lite/examples/video_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/video_classification
 
+      cd $SNAPCRAFT_PART_INSTALL
+      bash $SNAPCRAFT_PART_INSTALL/tflite/image_classification/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/object_detection/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/pose_estimation/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/image_segmentation/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/audio_classification/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/video_classification/setup.sh
 
-  image-classification:
-    plugin: dump
-    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_classification/rpi/lite-model_efficientnet_lite0_uint8_2.tflite
-    source-type: file
-    organize:
-      lite-model_efficientnet_lite0_uint8_2.tflite: efficientnet_lite0.tflite
-
-  object-detection:
-    plugin: dump
-    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/lite-model_efficientdet_lite0_detection_metadata_1.tflite
-    source-type: file
-    organize:
-      lite-model_efficientdet_lite0_detection_metadata_1.tflite: efficientdet_lite0.tflite
-
-  pose-estimation:
-    plugin: nil
-    build-environment:
-      - DATA_DIR: $CRAFT_PART_INSTALL
-    override-pull: |
-      # Download TF Lite models
-      FILE=${DATA_DIR}/posenet.tflite
-      if [ ! -f "$FILE" ]; then
-        curl \
-          -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/posenet_mobilenet_v1_100_257x257_multi_kpt_stripped.tflite' \
-          -o ${FILE}
-      fi
-
-      FILE=${DATA_DIR}/movenet_lightning.tflite
-      if [ ! -f "$FILE" ]; then
-        curl \
-          -L 'https://tfhub.dev/google/lite-model/movenet/singlepose/lightning/tflite/float16/4?lite-format=tflite' \
-          -o ${FILE}
-      fi
-
-      FILE=${DATA_DIR}/movenet_thunder.tflite
-      if [ ! -f "$FILE" ]; then
-        curl \
-          -L 'https://tfhub.dev/google/lite-model/movenet/singlepose/thunder/tflite/float16/4?lite-format=tflite' \
-          -o ${FILE}
-      fi
-
-      FILE=${DATA_DIR}/movenet_multipose.tflite
-      if [ ! -f "$FILE" ]; then
-        curl \
-          -L 'https://tfhub.dev/google/lite-model/movenet/multipose/lightning/tflite/float16/1?lite-format=tflite' \
-          -o ${FILE}
-      fi
-
-      FILE=${DATA_DIR}/classifier.tflite
-      if [ ! -f "$FILE" ]; then
-        curl \
-          -L 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/pose_classifier/yoga_classifier.tflite' \
-          -o ${FILE}
-      fi
-
-  image-segmentation:
-    plugin: dump
-    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/image_segmentation/rpi/lite-model_deeplabv3_1_metadata_2.tflite
-    source-type: file
-    organize:
-      lite-model_deeplabv3_1_metadata_2.tflite: deeplabv3.tflite
-
-  audio-classification:
-    plugin: dump
-    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/audio_classification/rpi/lite-model_yamnet_classification_tflite_1.tflite
-    source-type: file
-    organize:
-      lite-model_yamnet_classification_tflite_1.tflite: yamnet.tflite
-
-  video-classification:
-    plugin: dump
-    source: https://tfhub.dev/tensorflow/lite-model/movinet/a0/stream/kinetics-600/classification/tflite/int8/1?lite-format=tflite
-    source-type: file
-    organize:
-      1?lite-format=tflite: movinet_a0_int8.tflite
 
 apps:
   image-classification:
