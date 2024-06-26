@@ -1,9 +1,7 @@
 # TensorFlow Lite Examples Snap
 
-This is a snapped version of the examples for the Raspberry Pi which are available at [https://www.tensorflow.org/lite/examples](https://www.tensorflow.org/lite/examples). 
+This is a snapped version of the TensorFlow Lite examples for the Raspberry Pi which are available at [https://www.tensorflow.org/lite/examples](https://www.tensorflow.org/lite/examples). 
 This snap should work on a Raspberry Pi running Ubuntu Desktop or Ubuntu Frame, but will also work on an AMD64 device running Ubuntu Desktop.
-
-> TensorFlow Lite supports Coral EdgeTPUs. We have tested this snap with their [USB Accelerator](https://coral.ai/products/accelerator). 
 
 ## Build the snap
 
@@ -36,6 +34,22 @@ If you want to use a Coral USB Accelerator, also connect the raw-usb plug:
 
 ```
 sudo snap connect tf-lite-examples:raw-usb
+```
+
+## Edge TPU
+TensorFlow Lite supports Coral Edge TPUs. We have tested this snap with their [USB Accelerator](https://coral.ai/products/accelerator). 
+
+On AMD64 computers this will work after the `raw-usb` interface is connected.
+
+On a Raspberry Pi this interface has a bug that does not provide the required permissions to the snap to access `raw-usb` devices. A workaround is to install the snap in `devmode`, which removes all confinement from the snap. This is insecure and not recommended, but currently the only way to use a Coral USB Accelerator with this snap on a Raspberry Pi. To install the snap in `devmode`, do:
+
+```
+sudo snap install --dangerous ./tf-lite-examples_*+snap_amd64.snap --devmode
+```
+
+In addition to `devmode` one also need to run the examples with sudo. On the Raspberry Pi prefix all the example commands that use the USB Accelerator with sudo. Example:
+```
+sudo tf-lite-examples.object-detection --enableEdgeTPU --model efficientdet_lite0_edgetpu.tflite
 ```
 
 ## Running the examples
@@ -121,4 +135,4 @@ Aborted (core dumped)
 tf-lite-examples.video-classification --label tflite/video_classification/kinetics600_label_map.txt
 ```
 
-> Note: because the running directory is different than the one where the video classification example looks for the lable file, one needs to specify the path to it as an argument.
+> Note: because the running directory is different than the one where the video classification example looks for the label file, one needs to specify the path to it as an argument.
