@@ -37,7 +37,7 @@ parts:
       - protobuf>=3.18.0,<4
       - pandas
       - tflite-runtime
-      - matplotlib   # Required for audio-classification
+      # - matplotlib   # Required for audio-classification
       # - sounddevice  # Required for audio-classification
       # - scipy        # Required for audio-classification
 
@@ -49,7 +49,7 @@ parts:
       - libice6
       - libsm6
       # - python3-pyaudio  # Required for audio-classification
-      # - libportaudio2  # Required for audio-classification
+      # - libportaudio2    # Required for audio-classification
       - libedgetpu1-std
       - python3-pycoral
 
@@ -85,6 +85,7 @@ parts:
       # Video classification
       cp -r lite/examples/video_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/video_classification
 
+      # These setup scripts downloads the models into the current working directory. For now store them in the snap root.
       cd $SNAPCRAFT_PART_INSTALL
       bash $SNAPCRAFT_PART_INSTALL/tflite/image_classification/setup.sh
       bash $SNAPCRAFT_PART_INSTALL/tflite/object_detection/setup.sh
