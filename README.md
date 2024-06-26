@@ -1,7 +1,8 @@
 # TensorFlow Lite Examples Snap
 
-This is a snapped version of the TensorFlow Lite examples for the Raspberry Pi which are available at [https://www.tensorflow.org/lite/examples](https://www.tensorflow.org/lite/examples). 
-This snap should work on a Raspberry Pi running Ubuntu Desktop or Ubuntu Frame, but will also work on an AMD64 device running Ubuntu Desktop.
+This is a snapped version of the TensorFlow Lite examples for the Raspberry Pi which are available at [https://www.tensorflow.org/lite/examples](https://www.tensorflow.org/lite/examples).
+
+This snap should work on a Raspberry Pi 5 or an AMD64 device running Ubuntu Desktop.
 
 ## Build the snap
 
