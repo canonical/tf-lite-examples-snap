@@ -1,6 +1,9 @@
 # TensorFlow Lite Examples Snap
 
-This is a snapped version of the examples for the Raspberry Pi which are available at https://www.tensorflow.org/lite/examples. This snap should work on a Raspberry Pi running Ubuntu Desktop or Ubuntu Frame, but will also work on an AMD64 device running Ubuntu Desktop.
+This is a snapped version of the examples for the Raspberry Pi which are available at [https://www.tensorflow.org/lite/examples](https://www.tensorflow.org/lite/examples). 
+This snap should work on a Raspberry Pi running Ubuntu Desktop or Ubuntu Frame, but will also work on an AMD64 device running Ubuntu Desktop.
+
+> TensorFlow Lite supports Coral EdgeTPUs. We have tested this snap with their [USB Accelerator](https://coral.ai/products/accelerator). 
 
 ## Build the snap
 
@@ -12,7 +15,8 @@ snapcraft -v
 
 ## Install the snap
 
-Currently this snap is not available from the store, so you need to build it yourself. After building the snap according to the previous section, you should have a `.snap` file in your working directory. 
+Currently this snap is not available from the store, so you need to build it yourself.
+After building the snap according to the previous section, you should have a `.snap` file in your working directory. 
 
 Install it by running:
 ```
@@ -21,24 +25,43 @@ sudo snap install --dangerous ./tf-lite-examples_*+snap_amd64.snap
 
 ## Connect interfaces
 
-Most of the examples use the system camera. Please connect the `camera` interface to give the snap access to the camera:
+Most of the examples use the system camera.
+Please connect the `camera` interface to give the snap access to the camera:
 
 ```
 sudo snap connect tf-lite-examples:camera
+```
+
+If you want to use a Coral USB Accelerator, also connect the raw-usb plug:
+
+```
+sudo snap connect tf-lite-examples:raw-usb
 ```
 
 ## Running the examples
 
 ### Image classification
 
+On the CPU:
 ```
 tf-lite-examples.image-classification
 ```
 
+With a Coral USB Accelerator:
+```
+tf-lite-examples.image-classification --enableEdgeTPU --model efficientnet_lite0_edgetpu.tflite
+```
+
 ### Object detection
 
+On the CPU:
 ```
 tf-lite-examples.object-detection
+```
+
+With a Coral USB Accelerator:
+```
+tf-lite-examples.object-detection --enableEdgeTPU --model efficientdet_lite0_edgetpu.tflite
 ```
 
 ### Pose estimation
@@ -47,7 +70,8 @@ tf-lite-examples.object-detection
 tf-lite-examples.pose-estimation
 ```
 
-The alternative models for pose estimation is also available. They can be selected by providing a command line argument with the model name:
+The alternative models for pose estimation is also available.
+They can be selected by providing a command line argument with the model name:
 ```
 $ tf-lite-examples.pose-estimation --model posenet
 $ tf-lite-examples.pose-estimation --model movenet_lightning
@@ -62,11 +86,17 @@ $ tf-lite-examples.pose-estimation --classifier classifier --label_file tflite/p
 
 ### Segmentation
 
+On the CPU:
 ```
 tf-lite-examples.image-segmentation
 ```
 
-### Audio classification
+With a Coral USB Accelerator:
+```
+tf-lite-examples.image-segmentation --enableEdgeTPU --model deeplabv3_edgetpu.tflite
+```
+
+### ⚠️ Audio classification
 
 > Audio classification does not currently work due to a dependency issue between snap `core22` and `libportaudio2`.
 

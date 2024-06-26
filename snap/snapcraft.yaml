@@ -12,6 +12,13 @@ architectures:
   - build-on: amd64
   - build-on: arm64
 
+package-repositories:
+  - type: apt
+    components: [main]
+    suites: [coral-edgetpu-stable]
+    key-id: 35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3
+    url: https://packages.cloud.google.com/apt
+
 parts:
   local:
     plugin: nil
@@ -43,6 +50,8 @@ parts:
       - libsm6
       # - python3-pyaudio  # Required for audio-classification
       # - libportaudio2  # Required for audio-classification
+      - libedgetpu1-std
+      - python3-pycoral
 
   tensorflow-lite:
     build-environment:
@@ -90,6 +99,7 @@ apps:
     plugs:
       - camera
       - x11
+      - raw-usb
     command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/image_classification/classify.py
 
@@ -97,6 +107,7 @@ apps:
     plugs:
       - camera
       - x11
+      - raw-usb
     command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/object_detection/detect.py
 
@@ -104,6 +115,7 @@ apps:
     plugs:
       - camera
       - x11
+      - raw-usb
     command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/pose_estimation/pose_estimation.py
 
@@ -111,6 +123,7 @@ apps:
     plugs:
       - camera
       - x11
+      - raw-usb
     command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/image_segmentation/segment.py
 
@@ -118,6 +131,7 @@ apps:
     plugs:
       - audio-record
       - x11
+      - raw-usb
     command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/audio_classification/classify.py
 
@@ -125,6 +139,7 @@ apps:
     plugs:
       - camera
       - x11
+      - raw-usb
     command-chain: [bin/cd-to-snap.sh]
     command: bin/python3 $SNAP/tflite/video_classification/classify.py
 
