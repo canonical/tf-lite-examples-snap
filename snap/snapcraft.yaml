@@ -16,6 +16,7 @@ package-repositories:
   - type: apt
     components: [main]
     suites: [coral-edgetpu-stable]
+    # The gpg key for this repo is stored in .snap/keys/DC6315A3.asc as documented at https://snapcraft.io/docs/package-repositories#heading--keyid
     key-id: 35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3
     url: https://packages.cloud.google.com/apt
 
@@ -58,14 +59,15 @@ parts:
       - BUILD_METADATA: snap
     plugin: dump
     source: https://github.com/tensorflow/examples.git
+    source-commit: fff4bcda7201645a1efaea4534403daf5fc03d42
     source-depth: 1
 
     override-pull: |
       snapcraftctl pull
 
       # prefix the snap version with the upstream tag, or fall back to the commit hash
-      UPSTREAM_VERSION=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD)
-      snapcraftctl set-version $UPSTREAM_VERSION+$BUILD_METADATA
+      TF_REF=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD)
+      snapcraftctl set-version $TF_REF+$BUILD_METADATA
 
     override-build: |
       snapcraftctl build

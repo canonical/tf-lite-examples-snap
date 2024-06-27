@@ -42,13 +42,13 @@ TensorFlow Lite supports Coral Edge TPUs. We have tested this snap with their [U
 
 On AMD64 computers this will work after the `raw-usb` interface is connected.
 
-On a Raspberry Pi this interface has a bug that does not provide the required permissions to the snap to access `raw-usb` devices. A workaround is to install the snap in `devmode`, which removes all confinement from the snap. This is insecure and not recommended, but currently the only way to use a Coral USB Accelerator with this snap on a Raspberry Pi. To install the snap in `devmode`, do:
+On the Raspberry Pi 5 this interface has a [bug](https://bugs.launchpad.net/snapd/+bug/2071319) that does not provide the required permissions to the snap to access `raw-usb` devices. A workaround is to install the snap in [developer mode](https://snapcraft.io/docs/install-modes#heading--developer), which removes all confinement from the snap. This is insecure and not recommended, but currently the only way to use a Coral USB Accelerator with this snap on a Raspberry Pi. To install the snap in developer mode, do:
 
 ```
 sudo snap install --dangerous ./tf-lite-examples_*+snap_amd64.snap --devmode
 ```
 
-In addition to `devmode` one also need to run the examples with sudo. On the Raspberry Pi prefix all the example commands that use the USB Accelerator with sudo. Example:
+In addition to this one also needs to run the examples with sudo. On the Raspberry Pi prefix all the example commands that use the USB Accelerator with sudo. Example:
 ```
 sudo tf-lite-examples.object-detection --enableEdgeTPU --model efficientdet_lite0_edgetpu.tflite
 ```
