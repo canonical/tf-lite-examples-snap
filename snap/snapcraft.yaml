@@ -1,0 +1,151 @@
+name: tf-lite-examples
+summary: TensorFlow Lite Examples
+description: TensorFlow Lite examples for the Raspberry Pi packaged in a snap with all the required dependencies.
+adopt-info: tensorflow-lite
+
+confinement: strict
+grade: devel
+
+base: core20
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+
+package-repositories:
+  - type: apt
+    components: [main]
+    suites: [coral-edgetpu-stable]
+    # The gpg key for this repo is stored in .snap/keys/DC6315A3.asc as documented at https://snapcraft.io/docs/package-repositories#heading--keyid
+    key-id: 35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3
+    url: https://packages.cloud.google.com/apt
+
+parts:
+  local:
+    plugin: nil
+    source: snap/local
+    override-build: |
+      cp -rv bin $SNAPCRAFT_PART_INSTALL/
+
+  python-dependencies:
+    plugin: python
+    source: .
+    python-packages:
+      - argparse
+      - numpy>=1.20.0
+      - opencv-python~=4.5.3.56
+      - tflite-support==0.4.3
+      - protobuf>=3.18.0,<4
+      - pandas
+      - tflite-runtime
+      # - matplotlib   # Required for audio-classification
+      # - sounddevice  # Required for audio-classification
+      # - scipy        # Required for audio-classification
+
+  deb-dependencies:
+    plugin: nil
+    stage-packages:
+      - libgl1
+      - python3-libusb1
+      - libice6
+      - libsm6
+      # - python3-pyaudio  # Required for audio-classification
+      # - libportaudio2    # Required for audio-classification
+      - libedgetpu1-std
+      - python3-pycoral
+
+  tensorflow-lite:
+    build-environment:
+      - BUILD_METADATA: snap
+    plugin: dump
+    source: https://github.com/tensorflow/examples.git
+    source-commit: fff4bcda7201645a1efaea4534403daf5fc03d42
+    source-depth: 1
+
+    override-pull: |
+      snapcraftctl pull
+
+      # prefix the snap version with the upstream tag, or fall back to the commit hash
+      TF_REF=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD)
+      snapcraftctl set-version $TF_REF+$BUILD_METADATA
+
+    override-build: |
+      snapcraftctl build
+
+      mkdir -p $SNAPCRAFT_PART_INSTALL/tflite
+
+      # Image classification
+      cp -r lite/examples/image_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/image_classification
+      # Object detection
+      cp -r lite/examples/object_detection/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/object_detection
+      # Pose estimation
+      cp -r lite/examples/pose_estimation/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/pose_estimation
+      # Image segmentation
+      cp -r lite/examples/image_segmentation/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/image_segmentation
+      # Audio classification
+      cp -r lite/examples/audio_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/audio_classification
+      # Video classification
+      cp -r lite/examples/video_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/video_classification
+
+      # These setup scripts downloads the models into the current working directory. For now store them in the snap root.
+      cd $SNAPCRAFT_PART_INSTALL
+      bash $SNAPCRAFT_PART_INSTALL/tflite/image_classification/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/object_detection/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/pose_estimation/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/image_segmentation/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/audio_classification/setup.sh
+      bash $SNAPCRAFT_PART_INSTALL/tflite/video_classification/setup.sh
+
+
+apps:
+  image-classification:
+    plugs:
+      - camera
+      - x11
+      - raw-usb
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3 $SNAP/tflite/image_classification/classify.py
+
+  object-detection:
+    plugs:
+      - camera
+      - x11
+      - raw-usb
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3 $SNAP/tflite/object_detection/detect.py
+
+  pose-estimation:
+    plugs:
+      - camera
+      - x11
+      - raw-usb
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3 $SNAP/tflite/pose_estimation/pose_estimation.py
+
+  image-segmentation:
+    plugs:
+      - camera
+      - x11
+      - raw-usb
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3 $SNAP/tflite/image_segmentation/segment.py
+
+  audio-classification:
+    plugs:
+      - audio-record
+      - x11
+      - raw-usb
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3 $SNAP/tflite/audio_classification/classify.py
+
+  video-classification:
+    plugs:
+      - camera
+      - x11
+      - raw-usb
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3 $SNAP/tflite/video_classification/classify.py
+
+  python:
+    command-chain: [bin/cd-to-snap.sh]
+    command: bin/python3
