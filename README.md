@@ -6,7 +6,7 @@ This is a snapped version of the TensorFlow Lite examples for the Raspberry Pi w
 
 This snap has been tested using a USB webcam on the following platforms.
 
-| Platform       | OS                   | CPU               | Edge TPU                     |
+| Platform       | OS                   | CPU               | [Edge TPU](#edge-tpu)        |
 | -------------- | -------------------- | ----------------- | ---------------------------- |
 | AMD64          | Ubuntu 24.04 Desktop | yes               | yes                          |
 | Raspberry Pi 5 | Ubuntu 24.04 Desktop | yes               | yes (only in developer mode) |
@@ -50,7 +50,7 @@ sudo snap connect tf-lite-examples:raw-usb
 
 ## Edge TPU
 
-TensorFlow Lite supports Coral Edge TPUs. We have tested this snap with their [USB Accelerator](https://coral.ai/products/accelerator).
+TensorFlow Lite supports Coral Edge TPUs. The snap has been tested with the [Coral USB Accelerator](https://coral.ai/products/accelerator). See [supported platforms](#supported-platforms).
 
 The correct udev rules need to be installed. For the USB Accelerator you can add the rules with this command:
 
@@ -68,8 +68,8 @@ sudo udevadm trigger
 ```
 
 On the Raspberry Pi 5 the `raw-usb` interface has a [bug](https://bugs.launchpad.net/snapd/+bug/2071319) that does not provide the required permissions to the snap to access `raw-usb` devices.
-A workaround is to install the snap in [developer mode](https://snapcraft.io/docs/install-modes#heading--developer), which removes all confinement from the snap.
-This is insecure and not recommended, but currently the only way to use a Coral USB Accelerator with this snap on a Raspberry Pi.
+A workaround is to install the snap in [developer mode](https://snapcraft.io/docs/install-modes#heading--developer), which removes all confinement from the snap and disables automatic upgrades.
+This is insecure and not recommended, but currently the only way to use a Coral USB Accelerator with this snap on a Raspberry Pi 5.
 To install the snap in developer mode, do:
 
 ```
