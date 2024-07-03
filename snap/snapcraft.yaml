@@ -5,6 +5,7 @@ adopt-info: tensorflow-lite
 
 confinement: strict
 grade: devel
+license: Apache-2.0
 
 base: core20
 
