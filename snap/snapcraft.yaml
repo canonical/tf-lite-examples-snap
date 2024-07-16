@@ -7,13 +7,15 @@ confinement: strict
 grade: devel
 license: Apache-2.0
 
-base: core20
+base: core24
 
-architectures:
-  - build-on: amd64
-  - build-on: arm64
+platforms:
+  amd64:
+  arm64:
 
 package-repositories:
+  - type: apt
+    ppa: deadsnakes/ppa
   - type: apt
     components: [main]
     suites: [coral-edgetpu-stable]
@@ -28,8 +30,19 @@ parts:
     override-build: |
       cp -rv bin $SNAPCRAFT_PART_INSTALL/
 
+  python38:
+    plugin: nil
+    stage-packages:
+      - python3.8-full
+      - python3.8-distutils
+      - python3.8-venv
+      - python3-pip
+
   python-dependencies:
+    after: [python38]
     plugin: python
+    build-environment:
+      - PARTS_PYTHON_INTERPRETER: python3.8
     source: .
     python-packages:
       - argparse
@@ -44,6 +57,7 @@ parts:
       # - scipy        # Required for audio-classification
 
   deb-dependencies:
+    after: [python38]
     plugin: nil
     stage-packages:
       - libgl1
@@ -53,9 +67,16 @@ parts:
       # - python3-pyaudio  # Required for audio-classification
       # - libportaudio2    # Required for audio-classification
       - libedgetpu1-std
-      - python3-pycoral
+
+  # To install pycoral see https://github.com/tensorflow/tensorflow/issues/53110#issuecomment-977326183
+  pycoral:
+    after: [python38]
+    plugin: nil
+    override-build: |
+      python3.8 -m pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=2.0
 
   tensorflow-lite:
+    after: [python38]
     build-environment:
       - BUILD_METADATA: snap
     plugin: dump
@@ -64,39 +85,38 @@ parts:
     source-depth: 1
 
     override-pull: |
-      snapcraftctl pull
+      craftctl default
 
       # prefix the snap version with the upstream tag, or fall back to the commit hash
       TF_REF=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD)
-      snapcraftctl set-version $TF_REF+$BUILD_METADATA
+      craftctl set version=$TF_REF+$BUILD_METADATA
 
     override-build: |
-      snapcraftctl build
+      craftctl default
 
-      mkdir -p $SNAPCRAFT_PART_INSTALL/tflite
+      mkdir -p $CRAFT_PART_INSTALL/tflite
 
       # Image classification
-      cp -r lite/examples/image_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/image_classification
+      cp -r lite/examples/image_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_classification
       # Object detection
-      cp -r lite/examples/object_detection/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/object_detection
+      cp -r lite/examples/object_detection/raspberry_pi $CRAFT_PART_INSTALL/tflite/object_detection
       # Pose estimation
-      cp -r lite/examples/pose_estimation/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/pose_estimation
+      cp -r lite/examples/pose_estimation/raspberry_pi $CRAFT_PART_INSTALL/tflite/pose_estimation
       # Image segmentation
-      cp -r lite/examples/image_segmentation/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/image_segmentation
+      cp -r lite/examples/image_segmentation/raspberry_pi $CRAFT_PART_INSTALL/tflite/image_segmentation
       # Audio classification
-      cp -r lite/examples/audio_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/audio_classification
+      cp -r lite/examples/audio_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/audio_classification
       # Video classification
-      cp -r lite/examples/video_classification/raspberry_pi $SNAPCRAFT_PART_INSTALL/tflite/video_classification
+      cp -r lite/examples/video_classification/raspberry_pi $CRAFT_PART_INSTALL/tflite/video_classification
 
       # These setup scripts downloads the models into the current working directory. For now store them in the snap root.
-      cd $SNAPCRAFT_PART_INSTALL
-      bash $SNAPCRAFT_PART_INSTALL/tflite/image_classification/setup.sh
-      bash $SNAPCRAFT_PART_INSTALL/tflite/object_detection/setup.sh
-      bash $SNAPCRAFT_PART_INSTALL/tflite/pose_estimation/setup.sh
-      bash $SNAPCRAFT_PART_INSTALL/tflite/image_segmentation/setup.sh
-      bash $SNAPCRAFT_PART_INSTALL/tflite/audio_classification/setup.sh
-      bash $SNAPCRAFT_PART_INSTALL/tflite/video_classification/setup.sh
-
+      cd $CRAFT_PART_INSTALL
+      bash $CRAFT_PART_INSTALL/tflite/image_classification/setup.sh
+      bash $CRAFT_PART_INSTALL/tflite/object_detection/setup.sh
+      bash $CRAFT_PART_INSTALL/tflite/pose_estimation/setup.sh
+      bash $CRAFT_PART_INSTALL/tflite/image_segmentation/setup.sh
+      bash $CRAFT_PART_INSTALL/tflite/audio_classification/setup.sh
+      bash $CRAFT_PART_INSTALL/tflite/video_classification/setup.sh
 
 apps:
   image-classification:
