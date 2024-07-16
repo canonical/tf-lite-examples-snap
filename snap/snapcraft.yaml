@@ -69,6 +69,13 @@ parts:
       - libedgetpu1-std
       # - python3-pycoral
 
+  pycoral:
+    after: [python38]
+    plugin: nil
+    override-build: |
+      # To install pycoral see https://github.com/tensorflow/tensorflow/issues/53110#issuecomment-977326183
+      python3.8 -m pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=2.0
+
   tensorflow-lite:
     after: [python38]
     build-environment:
