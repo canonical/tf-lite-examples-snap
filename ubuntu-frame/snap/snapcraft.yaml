@@ -114,8 +114,7 @@ apps:
 
   camera-detect-stream:
     daemon: simple
-    restart-delay: 3s
-    restart-condition: always
+    install-mode: disable
     environment:
       DATA_DIR: $SNAP
     plugs:
