@@ -96,12 +96,16 @@ parts:
 
 apps:
   image-detect:
+    environment:
+      DATA_DIR: $SNAP
     plugs:
       - home
       - raw-usb
     command: bin/python3 $SNAP/image_detect.py
 
   camera-detect:
+    environment:
+      DATA_DIR: $SNAP
     plugs:
       - home
       - camera
@@ -112,6 +116,8 @@ apps:
     daemon: simple
     restart-delay: 3s
     restart-condition: always
+    environment:
+      DATA_DIR: $SNAP
     plugs:
       - home
       - camera

@@ -107,7 +107,7 @@ def main():
         '--model',
         help='Path of the object detection model.',
         required=False,
-        default=os.getenv('SNAP', '.') + '/efficientdet_lite0.tflite')
+        default=os.getenv('DATA_DIR', '.') + '/efficientdet_lite0.tflite')
     parser.add_argument(
         '--cameraId', help='Id of camera.', required=False, type=int, default=0)
     parser.add_argument(

@@ -82,14 +82,14 @@ def main():
     parser.add_argument(
         '-i',
         '--image',
-        default=os.getenv('SNAP', '.') + '/grace_hopper.bmp',
+        default=os.getenv('DATA_DIR', '.') + '/grace_hopper.bmp',
         help='Input image to detect objects in')
     parser.add_argument(
         '-m',
         '--model',
         help='Path of the object detection model.',
         required=False,
-        default=os.getenv('SNAP', '.') + '/efficientdet_lite0.tflite')
+        default=os.getenv('DATA_DIR', '.') + '/efficientdet_lite0.tflite')
     parser.add_argument(
         '-t',
         '--numThreads',

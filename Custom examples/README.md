@@ -208,3 +208,9 @@ For example to change the port the service listens on to 8084, and then restarti
 sudo snap set tf-custom-examples camera-detect-stream.arguments="--port 8084"
 sudo snap restart tf-custom-examples.camera-detect-stream
 ```
+
+To view the current configuration, you can run:
+```
+$ sudo snap get tf-custom-examples camera-detect-stream.arguments
+--port 8084
+```
