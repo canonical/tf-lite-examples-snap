@@ -166,6 +166,9 @@ def index():
 
 
 def main():
+    print("Camera Detect Stream startup")
+    print("Args:", sys.argv)
+
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
@@ -205,23 +208,18 @@ def main():
         required=False,
         default=False)
     parser.add_argument(
-        "-i",
         "--ip",
         help="ip address of the device",
         type=str,
         default='0.0.0.0',
         required=False)
     parser.add_argument(
-        "-o",
         "--port",
         help="ephemeral port number of the server (1024 to 65535)",
         type=int,
         default=8080,
         required=False)
     args = parser.parse_args()
-
-    print("cwd", os.getcwd())
-    print("model", args.model)
 
     # start a thread that will perform object detection
     t = threading.Thread(target=detect_objects,
