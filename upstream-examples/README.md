@@ -6,13 +6,13 @@ This is a snapped version of the TensorFlow Lite examples for the Raspberry Pi w
 
 This snap has been tested using a USB webcam on the following platforms.
 
-| Platform       | OS                   | CPU               | [Edge TPU](#edge-tpu)        |
-| -------------- | -------------------- | ----------------- | ---------------------------- |
-| AMD64          | Ubuntu 24.04 Desktop | yes               | yes                          |
-| Raspberry Pi 5 | Ubuntu 24.04 Desktop | yes               | yes (only in developer mode) |
-| Raspberry Pi 4 | Ubuntu 24.04 Desktop | yes               | not tested                   |
-| Raspberry Pi 3 | Ubuntu 24.04 Desktop | yes (slow, <1fps) | no (not enough resources)    |
-| Raspberry Pi 3 | Raspberry Pi OS      | yes               | yes                          |
+| Platform       | OS                   | CPU               | [Edge TPU](#edge-tpu)     |
+| -------------- | -------------------- | ----------------- | ------------------------- |
+| AMD64          | Ubuntu 24.04 Desktop | yes               | yes                       |
+| Raspberry Pi 5 | Ubuntu 24.04 Desktop | yes               | yes                       |
+| Raspberry Pi 4 | Ubuntu 24.04 Desktop | yes               | not tested                |
+| Raspberry Pi 3 | Ubuntu 24.04 Desktop | yes (slow, <1fps) | no (not enough resources) |
+| Raspberry Pi 3 | Raspberry Pi OS      | yes               | yes                       |
 
 ## Build the snap
 
@@ -50,9 +50,12 @@ sudo snap connect tf-lite-examples:raw-usb
 
 ## Edge TPU
 
-TensorFlow Lite supports Coral Edge TPUs. The snap has been tested with the [Coral USB Accelerator](https://coral.ai/products/accelerator). See [supported platforms](#supported-platforms).
+TensorFlow Lite supports Coral Edge TPUs.
+The snap has been tested with the [Coral USB Accelerator](https://coral.ai/products/accelerator).
+See [supported platforms](#supported-platforms).
 
-The correct udev rules need to be installed. For the USB Accelerator you can add the rules with this command:
+The correct udev rules need to be installed.
+For the USB Accelerator you can add the rules with this command:
 
 ```
 sudo sh -c "cat >>/etc/udev/rules.d/60-libedgetpu1-std.rules" <<-EOF
@@ -67,13 +70,11 @@ And then trigger a udev rule update:
 sudo udevadm trigger
 ```
 
-On the Raspberry Pi 5 the `raw-usb` interface has a [bug](https://bugs.launchpad.net/snapd/+bug/2071319) that does not provide the required permissions to the snap to access `raw-usb` devices.
-A workaround is to install the snap in [developer mode](https://snapcraft.io/docs/install-modes#heading--developer), which removes all confinement from the snap and disables automatic upgrades.
-This is insecure and not recommended, but currently the only way to use a Coral USB Accelerator with this snap on a Raspberry Pi 5.
-To install the snap in developer mode, do:
+On the Raspberry Pi 5 you also require the latest edge release of SnapD.
+To install it run this command:
 
 ```
-sudo snap install --dangerous ./tf-lite-examples_*+snap_amd64.snap --devmode
+sudo snap refresh snapd --edge
 ```
 
 ## Running the examples
