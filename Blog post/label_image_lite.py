@@ -34,17 +34,17 @@ if __name__ == '__main__':
     parser.add_argument(
         '-i',
         '--image',
-        default=os.getenv('SNAP')+'/grace_hopper.bmp',
+        default=os.getenv('DATA_DIR', '.')+'/grace_hopper.bmp',
         help='image to be classified')
     parser.add_argument(
         '-m',
         '--model_file',
-        default=os.getenv('SNAP')+'/mobilenet_v1_1.0_224.tflite',
+        default=os.getenv('DATA_DIR', '.')+'/mobilenet_v1_1.0_224.tflite',
         help='.tflite model to be executed')
     parser.add_argument(
         '-l',
         '--label_file',
-        default=os.getenv('SNAP')+'/labels.txt',
+        default=os.getenv('DATA_DIR', '.')+'/labels.txt',
         help='name of file containing labels')
     parser.add_argument(
         '--input_mean',

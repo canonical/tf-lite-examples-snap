@@ -72,6 +72,8 @@ parts:
 
 apps:
   tf-label-image:
+    environment:
+      DATA_DIR: $SNAP
     plugs:
       - home
     command: bin/python3 $SNAP/label_image_lite.py

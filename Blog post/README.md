@@ -24,7 +24,7 @@ Clone this repository and then run the following command in the cloned directory
 snapcraft -v
 ```
 
-We recommend building on Ubuntu Desktop 24.0 or Ubuntu Server 24.04.
+We recommend building on Ubuntu Desktop 24.04 or Ubuntu Server 24.04.
 
 ## Install the snap
 
@@ -109,7 +109,3 @@ Type "help", "copyright", "credits" or "license" for more information.
 '2.14.0'
 >>>
 ```
-
-## Further examples
-
-More advanced TensorFlow Lite snap examples can be found [here](https://github.com/canonical/tf-lite-examples-snap).
