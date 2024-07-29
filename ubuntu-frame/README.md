@@ -39,13 +39,6 @@ You also need to connect the camera plug for the camera examples to work:
 sudo snap connect tf-custom-examples:camera
 ```
 
-The snap includes a daemon process called `camera-detect-stream` that automatically starts when the snap is installed.
-Stop it now until you read the rest of the readme.
-
-```
-sudo snap stop tf-custom-examples.camera-detect-stream
-```
-
 ## How to use
 
 ### Detect objects in image
@@ -79,7 +72,6 @@ tf-custom-examples.image-detect --help
 A more useful application is to detect objects in a video feed. The `camera-detect` app reads frames from an attached USB webcam, detects objects in the frames, and prints out the objects, their certainty, and their location to the console.
 
 ```
-tf-custom-examples.camera-detect
 $ tf-custom-examples.camera-detect
 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
 ...
@@ -106,7 +98,19 @@ To start it up, run:
 sudo snap start tf-custom-examples.camera-detect-stream
 ```
 
+To see if it is running you can check the logs with:
+
+```
+sudo snap logs tf-custom-examples.camera-detect-stream
+```
+
 On another device go to `http://<IP Address>:8080`, using the IP address of the device on which the snap is running, to see a live feed of the camera annotated with detected objects.
+
+To stop the service run:
+
+```
+sudo snap stop tf-custom-examples.camera-detect-stream
+```
 
 See [Advanced Usage](#advanced-usage) to configure the service.
 
@@ -121,28 +125,28 @@ scp tf-custom-examples_0.0.2_arm64.snap <username>@<address>:
 ```
 
 Install snap:
+
 ```
 sudo snap install --dangerous ./tf-custom-examples_0.0.2_arm64.snap
 ```
 
-Check daemon logs: 
-```
-sudo snap logs -f tf-custom-examples.camera-detect-stream
-```
-
-You will likely see a camera index out of range error, even though `ls /dev/video*` shows `video0` exists.
-
 Connect the camera plug:
+
 ```
 sudo snap connect tf-custom-examples:camera
 ```
 
-Restart snap daemon
+Start snap daemon:
+
 ```
-sudo snap restart tf-custom-examples.camera-detect-stream
+sudo snap start tf-custom-examples.camera-detect-stream
 ```
 
-You can check logs again to confirm the camera error is gone, and the service is running.
+You can check the logs to confirm the service is running:
+
+```
+sudo snap logs -f tf-custom-examples.camera-detect-stream
+```
 
 On another computer go to the IP address of the device, port 8080.
 For example: http://192.168.1.30:8080/
@@ -153,11 +157,13 @@ This web interface can also be displayed on the device itself using Ubuntu Frame
 It is however experimental, so your milage may vary.
 
 Install Ubuntu Frame and the WPE Web Kiosk snaps:
+
 ```
 snap install ubuntu-frame wpe-webkit-mir-kiosk
 ```
 
-Set the URL for the web kiosk: 
+Set the URL for the web kiosk:
+
 ```
 snap set wpe-webkit-mir-kiosk url=http://localhost:8080
 ```
@@ -185,6 +191,7 @@ For that purpose we added a wrapper script which checks for the `camera-detect-s
 If this option is set, its the value will be appended to the startup command of the daemon process.
 
 Available arguments are:
+
 ```
 optional arguments:
   -h, --help            show this help message and exit
@@ -204,12 +211,14 @@ optional arguments:
 ```
 
 For example to change the port the service listens on to 8084, and then restarting it for the changes to take affect:
+
 ```
 sudo snap set tf-custom-examples camera-detect-stream.arguments="--port 8084"
 sudo snap restart tf-custom-examples.camera-detect-stream
 ```
 
 To view the current configuration, you can run:
+
 ```
 $ sudo snap get tf-custom-examples camera-detect-stream.arguments
 --port 8084
