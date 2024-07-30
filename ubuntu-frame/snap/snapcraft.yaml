@@ -1,0 +1,126 @@
+name: tf-custom-examples
+summary: TensorFlow Lite examples for Ubuntu Core
+description: This snap provides a a couple of apps to showcase the use of TensorFlow Lite on Ubuntu Core.
+version: 0.0.2
+
+confinement: strict
+grade: devel
+license: Apache-2.0
+
+base: core24
+
+platforms:
+  amd64:
+  arm64:
+
+package-repositories:
+  - type: apt
+    ppa: deadsnakes/ppa
+  - type: apt
+    url: https://packages.cloud.google.com/apt
+    components: [main]
+    suites: [coral-edgetpu-stable]
+    # The gpg key for this repo is stored in .snap/keys/DC6315A3.asc as documented at https://snapcraft.io/docs/package-repositories#heading--keyid
+    key-id: 35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3
+
+parts:
+  local:
+    plugin: nil
+    source: snap/local
+    override-build: |
+      cp -rv bin $SNAPCRAFT_PART_INSTALL/
+
+  python38:
+    plugin: nil
+    stage-packages:
+      - python3.8-full
+      - python3.8-distutils
+      - python3.8-venv
+      - python3-pip
+      - libusb-1.0-0
+      - libedgetpu1-std
+
+  python-dependencies:
+    after: [python38]
+    plugin: python
+    build-environment:
+      - PARTS_PYTHON_INTERPRETER: python3.8
+    python-packages:
+      - opencv-python-headless
+      - tflite_support
+      - flask
+    source: .
+
+  # To install pycoral see https://github.com/tensorflow/tensorflow/issues/53110#issuecomment-977326183
+  pycoral:
+    after: [python38]
+    plugin: nil
+    override-build: |
+      python3.8 -m pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=2.0
+
+  scripts:
+    plugin: dump
+    source: .
+    override-build: |
+      cp utils.py $CRAFT_PART_INSTALL/
+      cp image_detect.py $CRAFT_PART_INSTALL/
+      cp camera_detect.py $CRAFT_PART_INSTALL/
+      cp camera_detect_stream.py $CRAFT_PART_INSTALL/
+
+  detect-model:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/lite-model_efficientdet_lite0_detection_metadata_1.tflite
+    source-type: file
+    source-checksum: sha256/2e04c53bfeac0ac2a30c057c7e2a777594ce39baaac35a92f74fb1e8c4fc4e0b
+    override-build: |
+      chmod a=r lite-model_efficientdet_lite0_detection_metadata_1.tflite
+      cp lite-model_efficientdet_lite0_detection_metadata_1.tflite $CRAFT_PART_INSTALL/efficientdet_lite0.tflite
+
+  detect-model-tpu:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/efficientdet_lite0_edgetpu_metadata.tflite
+    source-type: file
+    source-checksum: sha256/a3cc0baf52939ca20f45c70b3e8d2e7cb2f66a6f46576024f5301f9794cf5d78
+    override-build: |
+      chmod a=r efficientdet_lite0_edgetpu_metadata.tflite
+      cp efficientdet_lite0_edgetpu_metadata.tflite $CRAFT_PART_INSTALL/efficientdet_lite0_edgetpu.tflite
+
+  test-data:
+    plugin: dump
+    source: https://raw.githubusercontent.com/tensorflow/tensorflow/master/tensorflow/lite/examples/label_image/testdata/grace_hopper.bmp
+    source-type: file
+    source-checksum: sha256/8c1165a143b3ac5c37fba13a918101133d549d3419c7fc474ae70a2f29263b80
+    override-build: |
+      chmod a=r grace_hopper.bmp
+      cp grace_hopper.bmp $CRAFT_PART_INSTALL/
+
+apps:
+  image-detect:
+    environment:
+      DATA_DIR: $SNAP
+    plugs:
+      - home
+      - raw-usb
+    command: bin/python3 $SNAP/image_detect.py
+
+  camera-detect:
+    environment:
+      DATA_DIR: $SNAP
+    plugs:
+      - home
+      - camera
+      - raw-usb
+    command: bin/python3 $SNAP/camera_detect.py
+
+  camera-detect-stream:
+    daemon: simple
+    install-mode: disable
+    environment:
+      DATA_DIR: $SNAP
+    plugs:
+      - home
+      - camera
+      - network-bind
+      - raw-usb
+    command-chain: [bin/daemon-wrapper.sh]
+    command: bin/python3 $SNAP/camera_detect_stream.py
