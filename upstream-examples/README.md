@@ -70,11 +70,11 @@ And then trigger a udev rule update:
 sudo udevadm trigger
 ```
 
-On the Raspberry Pi 5 you also require the latest edge release of SnapD.
+On the Raspberry Pi 5 you also require SnapD version 2.64 or newer.
 To install it run this command:
 
 ```
-sudo snap refresh snapd --edge
+sudo snap refresh snapd --beta
 ```
 
 ## Running the examples
