@@ -63,8 +63,7 @@
             "name": "mesa-core20",
             "type": "app",
             "default-channel": "latest/stable",
-            "id": "pDDsAW9ifzZnogboHJu3udsA6LsbGeGP",
-            "presence": "optional"
+            "id": "pDDsAW9ifzZnogboHJu3udsA6LsbGeGP"
         },
         {
             "name": "landscape-client",
