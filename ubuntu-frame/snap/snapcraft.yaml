@@ -24,6 +24,16 @@ package-repositories:
     key-id: 35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3
 
 parts:
+  snapcraft-preload:
+    source: https://github.com/sergiusens/snapcraft-preload.git
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr -DLIBPATH=/lib
+    override-build: |
+      craftctl default
+      mkdir -p $SNAPCRAFT_PART_INSTALL/lib
+      cp libsnapcraft-preload.so $SNAPCRAFT_PART_INSTALL/lib/libsnapcraft-preload.so
+
   local:
     plugin: nil
     source: snap/local
@@ -117,10 +127,11 @@ apps:
     install-mode: disable
     environment:
       DATA_DIR: $SNAP
+      SNAPCRAFT_PRELOAD_REDIRECT_ONLY_SHM: 1
     plugs:
       - home
       - camera
       - network-bind
       - raw-usb
     command-chain: [bin/daemon-wrapper.sh]
-    command: bin/python3 $SNAP/camera_detect_stream.py
+    command: usr/bin/snapcraft-preload $SNAP/bin/python3 $SNAP/camera_detect_stream.py
