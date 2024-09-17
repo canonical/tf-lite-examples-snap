@@ -1,0 +1,17 @@
+{
+    "type": "system-user",
+    "authority-id": "<REDACTED>",
+    "series": [
+        "16"
+    ],
+    "brand-id": "<REDACTED>",
+    "email": "<REDACTED>",
+    "models": [
+        "uc24-pi-arm64-tflite"
+    ],
+    "name": "jpm",
+    "username": "jpm",
+    "password": "<REDACTED>",
+    "since": "2023-01-16T18:06:04+00:00",
+    "until": "2025-05-16T18:06:04+00:00"
+}
