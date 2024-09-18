@@ -1,3 +1,6 @@
+connections:
+   -  plug: XXQ5289gHOZX3I7j6sqWLX4yAst4pNAQ:camera
+
 defaults:
   # Ubuntu frame
   BPZbvWzvoMTrpec4goCXlckLe2IhfthK:
