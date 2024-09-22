@@ -4,17 +4,6 @@ connections:
 defaults:
   # Ubuntu frame
   BPZbvWzvoMTrpec4goCXlckLe2IhfthK:
-    # display: |
-    #   layouts:
-    #     default:
-    #       cards:
-    #         - card-id: 0
-    #           unknown-1:
-    #             orientation: inverted
-    # config: |
-    #   wallpaper-top=0x92006a
-    #   wallpaper-bottom=0xdd4814
-    #   add-wayland-extensions=zwp_pointer_constraints_v1:zwp_relative_pointer_manager_v1
     daemon: true
 
   # Set webkit kiosk url

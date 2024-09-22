@@ -29,18 +29,6 @@
             "id": "dwTAh7MZZ01zyriOZErqd1JynQLiOGvM"
         },
         {
-            "name": "core22",
-            "type": "base",
-            "default-channel": "latest/stable",
-            "id": "amcUKQILKXHHTlmSa7NMdnXSx02dNeeT"
-        },
-        {
-            "name": "core20",
-            "type": "base",
-            "default-channel": "latest/stable",
-            "id": "DLqre5XGLbDqg9jPtiAhRRjDuPVa5X1q"
-        },
-        {
             "name": "snapd",
             "type": "snapd",
             "default-channel": "latest/stable",
@@ -54,41 +42,50 @@
             "presence": "optional"
         },
         {
-            "name": "mesa-2404",
-            "type": "app",
-            "default-channel": "latest/stable",
-            "id": "HyhSEBPv3vHsW6uOHkQR384NgI7S6zpj"
-        },
-        {
-            "name": "mesa-core20",
-            "type": "app",
-            "default-channel": "latest/stable",
-            "id": "pDDsAW9ifzZnogboHJu3udsA6LsbGeGP"
-        },
-        {
             "name": "landscape-client",
             "type": "app",
             "default-channel": "latest/beta",
             "id": "ffnH0sJpX3NFAclH777M8BdXIWpo93af"
         },
         {
-            "name": "ubuntu-frame",
-            "type": "app",
-            "default-channel": "24/edge",
-            "id": "BPZbvWzvoMTrpec4goCXlckLe2IhfthK"
-        },
-        {
-            "name": "wpe-webkit-mir-kiosk",
-            "type": "app",
-            "default-channel": "latest/edge",
-            "id": "01sV9tv4UTUQTU3jYsAF1gJ5qv7ZqGls",
-            "presence": "optional"
+            "name": "core22",
+            "type": "base",
+            "default-channel": "latest/stable",
+            "id": "amcUKQILKXHHTlmSa7NMdnXSx02dNeeT"
         },
         {
             "name": "tf-ubuntu-frame-example",
             "type": "app",
             "default-channel": "latest/edge",
             "id": "XXQ5289gHOZX3I7j6sqWLX4yAst4pNAQ"
+        },
+        {
+            "name": "ubuntu-frame",
+            "type": "app",
+            "default-channel": "24/stable",
+            "id": "BPZbvWzvoMTrpec4goCXlckLe2IhfthK",
+            "presence": "optional"
+        },
+        {
+            "name": "mesa-2404",
+            "type": "app",
+            "default-channel": "latest/stable",
+            "id": "HyhSEBPv3vHsW6uOHkQR384NgI7S6zpj",
+            "presence": "optional"
+        },
+        {
+            "name": "mesa-core22",
+            "type": "app",
+            "default-channel": "latest/stable",
+            "id": "pDDsAW9ifzZnogboHJu3udsA6LsbGeGP",
+            "presence": "optional"
+        },
+        {
+            "name": "wpe-webkit-mir-kiosk",
+            "type": "app",
+            "default-channel": "22/candidate",
+            "id": "01sV9tv4UTUQTU3jYsAF1gJ5qv7ZqGls",
+            "presence": "optional"
         }
     ]
 }
