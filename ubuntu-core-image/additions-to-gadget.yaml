@@ -13,23 +13,23 @@ defaults:
   # Preconfigure Landscape Client
   ffnH0sJpX3NFAclH777M8BdXIWpo93af:
     landscape-url: https://landscape.canonical.com
-    account-name: "<REDACTED>"
+    account-name: "<account-name>"
     registration-key: ""
     auto-register:
       enabled: true
       computer-title-pattern: ${model}-${serial:0:8}
       wait-for-serial-as: true
 
-  system:
-    # Add this if you want to preconfigure wifi credentials
-    # system:
-    #   network:
-    #     netplan:
-    #       network:
-    #         version: 2
-    #         wifis:
-    #           wlan0:
-    #             dhcp4: true
-    #             access-points:
-    #               "my-wifi-ssid":
-    #                 password: "my-wifi-password"
+  # Add this if you want to pre-configure wifi credentials
+  # system:
+  #   system:
+  #     network:
+  #       netplan:
+  #         network:
+  #           version: 2
+  #           wifis:
+  #             wlan0:
+  #               dhcp4: true
+  #               access-points:
+  #                 "<wifi-ssid>":
+  #                   password: "<wifi-password>"

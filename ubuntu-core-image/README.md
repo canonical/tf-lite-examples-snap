@@ -39,8 +39,9 @@ Including this in the model doesn't currently work, but can be installed after t
 - `wpe-webkit-mir-kiosk`
 
 Update the model:
-- Add the developer
+- Add the developer ID
 - Add the timestamp
+- Set `console-conf`'s `presence` to `required` if you need a user and SSH access for debugging
 
 Sign the model:
 
