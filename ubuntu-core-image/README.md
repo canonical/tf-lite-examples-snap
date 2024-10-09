@@ -10,11 +10,16 @@ If the webcam is not mounted at `/dev/video0`, the path can be changed by settin
 
 ## Build the gadget snap
 
+Checkout the pi-gadget submodule:
+```
+git submodule update --init
+```
+
 Apply these changes to [gadget.yaml](pi-gadget/gadget.yaml):
 
 - Add the contents of [additions-to-gadget.yaml](additions-to-gadget.yaml) to the end.
 - ~~Around line number 10, change the seed partition size from `1200M` to `1500M`.~~
-- If you want to preconfigure WiFI, change the SSID and password.
+- If you want to pre-configure WiFI, uncomment the network config and set the SSID and password.
 - Add your Landscape account name if you want the device to automatically register as a pending device.
 
 In [Makefile](pi-gadget/Makefile) on line 150 change `fkms` to `kms`.
@@ -73,7 +78,7 @@ Accept the device onto your Landscape.
 Wait until the computer info shows and then go to the **Snaps** tab.
 Here you can click on **Install snaps**.
 Enter snap name `ubuntu-frame` and `24/stable` for _tracking channnel_.
-Clicvk **+** and also add `wpe-webkit-mir-kiosk` and `22/candidate`.
+Click **+** and also add `wpe-webkit-mir-kiosk` and `22/candidate`.
 Click **install**.
 
 ![install snap](../media/landscape-install.png)
@@ -96,5 +101,5 @@ This URL can be changed by setting snap options via a script on Landscape.
 An example script to do this can be found [here](https://github.com/canonical/landscape-scripts/blob/main/core/snaps/update-snap-config.py).
 
 ## Limitations
-- After a reboot, Mir Kiosk may fails to show the web view in case the web server hasn't fully started. In this case, it is necessary to restart the Mir Kiosk snap.
+- After a reboot, the Web Kiosk fails to show the web page in case the web server hasn't fully started. In this case, it is necessary to restart the `wpe-webkit-mir-kiosk` snap.
 - The USB camera should be connected before boot. Otherwise, after connecting the tf-lite application and Mir Kiosk should be restarted in the mentioned order.
