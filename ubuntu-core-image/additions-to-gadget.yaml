@@ -21,20 +21,15 @@ defaults:
       wait-for-serial-as: true
 
   system:
-    # Disable console-conf so that we do not have an interactive installer at first bootup
-    service:
-      console-conf:
-        disable: true
-
     # Add this if you want to preconfigure wifi credentials
-    system:
-      network:
-        netplan:
-          network:
-            version: 2
-            wifis:
-              wlan0:
-                dhcp4: true
-                access-points:
-                  "my-wifi-ssid":
-                    password: "my-wifi-password"
+    # system:
+    #   network:
+    #     netplan:
+    #       network:
+    #         version: 2
+    #         wifis:
+    #           wlan0:
+    #             dhcp4: true
+    #             access-points:
+    #               "my-wifi-ssid":
+    #                 password: "my-wifi-password"

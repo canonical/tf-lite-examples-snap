@@ -38,6 +38,10 @@ Including this in the model doesn't currently work, but can be installed after t
 - `mesa-2404`
 - `wpe-webkit-mir-kiosk`
 
+Update the model:
+- Add the developer
+- Add the timestamp
+
 Sign the model:
 
 ```
@@ -47,7 +51,7 @@ snap sign -k my-model-key model.json > model.model
 Build the image:
 
 ```
-ubuntu-image snap --snap pi-gadget/pi_24-1_arm64.snap --snap ../ubuntu-frame/tf-custom-examples_0.0.2_arm64.snap --validation=enforce model.model
+ubuntu-image snap --snap pi-gadget/pi_24-1_arm64.snap --validation=enforce model.model
 ```
 
 ## Booting the Pi
@@ -73,6 +77,12 @@ Click **install**.
 
 ![install snap](../media/landscape-install.png)
 
+This is equivalent to running the following on the device:
+```
+sudo snap install ubuntu-frame --channel=24/stable
+sudo snap install wpe-webkit-mir-kiosk --channel=22/candidate
+```sudo
+
 The installation command will take some time to be delivered to the device, and then executed.
 The result will be shown on Landscape.
 
@@ -80,6 +90,10 @@ If the installation was successful, you should see the annotated camera feed bei
 
 ![local monitor](../media/loca-monitor-frame.jpg)
 
-The URL that is displayed by the `wpe-webkit-mir-kiosk` is set to be the `tf-ubuntu-frame-example` endpoint by default, in the [gadget.yaml](additions-to-gadget.yaml).
+The URL that is served by the `wpe-webkit-mir-kiosk` is set to the `tf-ubuntu-frame-example`'s web server by default, in the [gadget.yaml](additions-to-gadget.yaml).
 This URL can be changed by setting snap options via a script on Landscape.
 An example script to do this can be found [here](https://github.com/canonical/landscape-scripts/blob/main/core/snaps/update-snap-config.py).
+
+## Limitations
+- After a reboot, Mir Kiosk may fails to show the web view in case the web server hasn't fully started. In this case, it is necessary to restart the Mir Kiosk snap.
+- The USB camera should be connected before boot. Otherwise, after connecting the tf-lite application and Mir Kiosk should be restarted in the mentioned order.
