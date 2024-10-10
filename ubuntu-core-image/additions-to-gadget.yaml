@@ -1,5 +1,6 @@
 connections:
-   -  plug: XXQ5289gHOZX3I7j6sqWLX4yAst4pNAQ:camera
+  # tf-ubuntu-frame-example
+  - plug: XXQ5289gHOZX3I7j6sqWLX4yAst4pNAQ:camera
 
 defaults:
   # Ubuntu frame
@@ -20,7 +21,7 @@ defaults:
       computer-title-pattern: ${model}-${serial:0:8}
       wait-for-serial-as: true
 
-  # Add this if you want to pre-configure wifi credentials
+  # Uncomment the following if you want to pre-configure wifi credentials
   # system:
   #   system:
   #     network:
