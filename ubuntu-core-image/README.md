@@ -87,7 +87,7 @@ This is equivalent to running the following on the device:
 ```
 sudo snap install ubuntu-frame --channel=24/stable
 sudo snap install wpe-webkit-mir-kiosk --channel=22/candidate
-```sudo
+```
 
 The installation command will take some time to be delivered to the device, and then executed.
 The result will be shown on Landscape.
@@ -96,10 +96,10 @@ If the installation was successful, you should see the annotated camera feed bei
 
 ![local monitor](../media/loca-monitor-frame.jpg)
 
-The URL that is served by the `wpe-webkit-mir-kiosk` is set to the `tf-ubuntu-frame-example`'s web server by default, in the [gadget.yaml](additions-to-gadget.yaml).
+By default, `wpe-webkit-mir-kiosk` opens the URL of the `tf-ubuntu-frame-example`'s web server. This is set in the [gadget.yaml](additions-to-gadget.yaml).
 This URL can be changed by setting snap options via a script on Landscape.
 An example script to do this can be found [here](https://github.com/canonical/landscape-scripts/blob/main/core/snaps/update-snap-config.py).
 
 ## Limitations
 - After a reboot, the Web Kiosk fails to show the web page in case the web server hasn't fully started. In this case, it is necessary to restart the `wpe-webkit-mir-kiosk` snap.
-- The USB camera should be connected before boot. Otherwise, after connecting the tf-lite application and Mir Kiosk should be restarted in the mentioned order.
+- The USB camera should be connected before boot. If the camera is connected after boot, `tf-ubuntu-frame-example` should be restarted after connecting the camera, followed by restarting `wpe-webkit-mir-kiosk`.
