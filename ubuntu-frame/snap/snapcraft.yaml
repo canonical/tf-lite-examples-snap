@@ -1,10 +1,13 @@
-name: tf-custom-examples
-summary: TensorFlow Lite examples for Ubuntu Core
-description: This snap provides a a couple of apps to showcase the use of TensorFlow Lite on Ubuntu Core.
-version: 0.0.2
+name: tf-ubuntu-frame-example
+summary: TensorFlow Lite examples for Ubuntu Core with Ubuntu Frame
+description: |
+  This snap provides a a couple of apps to showcase the use of TensorFlow Lite on Ubuntu Core.
+  Ubuntu Frame can be used to show the output on a local display, or the result can be streamed via a network connection.
+  The snap includes the necessary libraries to use a Coral Edge TPU.
+version: 0.0.3
 
 confinement: strict
-grade: devel
+grade: stable
 license: Apache-2.0
 
 base: core24
@@ -12,6 +15,10 @@ base: core24
 platforms:
   amd64:
   arm64:
+
+plugs:
+  shared-memory:
+    private: true
 
 package-repositories:
   - type: apt
@@ -114,7 +121,7 @@ apps:
 
   camera-detect-stream:
     daemon: simple
-    install-mode: disable
+    install-mode: enable
     environment:
       DATA_DIR: $SNAP
     plugs:
